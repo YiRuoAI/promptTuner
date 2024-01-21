@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@globalModules/*": ["./src/globalModules/*"],
+      "@globalServices/*": ["./src/globalServices/*"],
+      "@filters/*": ["./src/common/filters/*"],
+      "@decorators/*": ["./src/common/decorators/*"],
+      "@guards/*": ["./src/common/guards/*"],
+      "@interceptors/*": ["./src/common/interceptors/*"],
+      "@strategy/*": ["./src/common/strategy/*"],
+      "@common/*": ["./src/common/*"],
+      "@config/*": ["./src/config/*"],
+      "@dto/*": ["./src/dto/*"],
+      "@entities/*": ["./src/entities/*"],
+      "@hook/*": ["./src/hook/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@adminModules/*": ["./src/adminModules/*"],
+      "@redisDao/*": ["./src/redisDao/*"],
+      "@schemas/*": ["./src/schemas/*"],
+      "@static/*": ["./src/static/*"],
+      "@vo/*": ["./src/vo/*"],
+      "@src/*": ["./src/*"]
+    }
+  }
+}

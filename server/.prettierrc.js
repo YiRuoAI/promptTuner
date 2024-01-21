@@ -1,0 +1,27 @@
+module.exports = {
+  ...require('mwts/.prettierrc.json'),
+  'singleQuote': true,
+  'trailingComma': 'all',
+  'tabWidth': 2,
+  'importOrder': [
+    "^@globalModules/(.*)$",
+    "^@filters/(.*)$",
+    "^@decorators/(.*)$",
+    "^@guards/(.*)$",
+    "^@interceptors/(.*)$",
+    "^@strategy/(.*)$",
+    "^@common/(.*)$",
+    "^@config/(.*)$",
+    "^@dto/(.*)$",
+    "^@entities/(.*)$",
+    "^@hook/(.*)$",
+    "^@modules/(.*)$",
+    "^@redisDao/(.*)$",
+    "^@schemas/(.*)$",
+    "^@static/(.*)$",
+    "^@vo/(.*)$",
+    "^[./]",
+  ],
+	'importOrderSeparation': true,
+	'importOrderSortSpecifiers': true
+}
