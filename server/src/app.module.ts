@@ -8,6 +8,9 @@ import { ModelModule } from '@modules/model/model.module';
 import { SnakeNamingStrategy } from '@strategy/snake-naming.strategy';
 import { PromptTemplateModule } from '@modules/promptTemplate/promptTemplate.module';
 import { TestModule } from '@modules/test/test.module';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { WrapResponseInterceptor } from '@interceptors/wrapResponse.interceptor';
+import { CustomExceptionFilter } from '@filters/customException.filter';
 
 const importsArr = [
   TypeOrmModule.forRoot({
@@ -30,6 +33,16 @@ const importsArr = [
 @Module({
   imports: importsArr,
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: WrapResponseInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: CustomExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

@@ -1,27 +1,34 @@
 import {
+  Column,
   CreateDateColumn,
   DeleteDateColumn,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { BigIntTransformer } from './transformers/bigInt.transformer';
+import { DateTransformer } from './transformers/date.transformer';
 
 export class BaseEntity {
   @PrimaryColumn({ type: 'bigint', transformer: new BigIntTransformer() })
+  @PrimaryGeneratedColumn()
   id: string;
 
   @CreateDateColumn({
-    type: Number,
-    default: () => 1,
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP',
+    transformer: new DateTransformer(),
   })
-  createdAt: number;
+  createdAt: Date;
 
   @UpdateDateColumn({
-    type: Number,
+    type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+    transformer: new DateTransformer(),
   })
-  updatedAt: number;
+  updatedAt: Date;
 
   @DeleteDateColumn({
     type: Number,

@@ -1,4 +1,4 @@
-import { getIntl } from '@umijs/max';
+import { getIntl, request } from '@umijs/max';
 /**
    * @en-US International configuration
    * @zh-CN 国际化配置
@@ -21,8 +21,60 @@ export const ProviderLabel = {
   [Provider.yiruocloud]: intl.formatMessage({ id: 'pages.modelList.provider.yiruocloud' }),
 };
 
+export const ModelType = {
+  gpt_35_turbo_1106: 'gpt-3.5-turbo-1106',
+  gpt_35_turbo: 'gpt-3.5-turbo',
+  gpt_35_turbo_16k: 'gpt-3.5-turbo-16k',
+  gpt_35_turbo_0613: 'gpt-3.5-turbo-0613',
+  gpt_35_turbo_16k_0613: 'gpt-3.5-turbo-16k-0613',
+  gpt_35_turbo_0301: 'gpt-3.5-turbo-0301',
+  gpt_4_1106_preview: 'gpt-4-1106-preview',
+  gpt_4: 'gpt-4',
+  gpt_4_32k: 'gpt-4-32k',
+  gpt_4_0613: 'gpt-4-0613',
+  gpt_4_32k_0613: 'gpt-4-32k-0613',
+}
+
+export const ProviderUrl = {
+  [Provider.openai]: 'https://api.openai.com/v1/chat/completions',
+  [Provider.azure]: 'https://{your-resource-name}.openai.azure.com/openai/deployments/{deployment-id}/chat/completions?api-version={api-version}',
+  [Provider.yiruocloud]: 'https://api.yiruocloud.com/chat/completions',
+};
+
+
 export enum AuthType {
   Authentication,
   Sign,
+}
+
+export async function create(req: ServerAPI.createModelReq) {
+  return request<{ data: string }>('/model/create', {
+    method: 'POST',
+    data: req,
+  });
+}
+
+export async function update(req: ServerAPI.updateModelReq) {
+  return request<{ data: string }>('/model/update', {
+    method: 'POST',
+    data: req,
+  });
+}
+
+export async function del(id: string) {
+  return request<{ data: string }>('/model/delete', {
+    method: 'DELETE',
+    params: { id },
+  });
+}
+
+export async function list(req: ServerAPI.listModelReq): Promise<{ data: { list: ServerAPI.ModelListItem[], total: number } }> {
+  return request('/model/list', {
+    method: 'GET',
+    params: {
+      page: req.current,
+      pageSize: req.pageSize,
+    },
+  });
 }
 

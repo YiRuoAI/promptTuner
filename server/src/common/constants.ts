@@ -1,0 +1,1 @@
+export const NESTJS_RAW_RESPONSE = Symbol('NESTJS_RAW_RESPONSE');

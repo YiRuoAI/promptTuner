@@ -1,91 +1,15 @@
-import { addRule, removeRule, rule, updateRule } from '@/services/ant-design-pro/api';
 import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import {
-  FooterToolbar,
-  ModalForm,
   PageContainer,
-  ProDescriptions,
-  ProFormSelect,
-  ProFormText,
-  ProFormTextArea,
   ProTable,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
-import { Button, Drawer, Input, message } from 'antd';
+import { Button, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
-import type { FormValueType } from './components/UpdateForm';
-import UpdateForm from './components/UpdateForm';
 import CreateFormModal from './components/CreateForm';
-import { set } from 'lodash';
-import { modelService } from '@/services/server';
+import { promptService } from '@/services/server';
 
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.RuleListItem) => {
-  const hide = message.loading('正在添加');
-  try {
-    await addRule({ ...fields });
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
-
-/**
- * @en-US Update node
- * @zh-CN 更新节点
- *
- * @param fields
- */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('Configuring');
-  try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
-    hide();
-
-    message.success('Configuration is successful');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Configuration failed, please try again!');
-    return false;
-  }
-};
-
-/**
- *  Delete node
- * @zh-CN 删除节点
- *
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: API.ModelListItem[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeRule({
-      key: selectedRows.map((row) => row.key),
-    });
-    hide();
-    message.success('Deleted successfully and will refresh soon');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Delete failed, please try again');
-    return false;
-  }
-};
 
 const ModelList: React.FC = () => {
   /**
@@ -93,13 +17,10 @@ const ModelList: React.FC = () => {
    * @zh-CN 新建窗口的弹窗
    *  */
   const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
-  const [currentRow, setCurrentRow] = useState<ServerAPI.ModelListItem>();
-
-  const [showDetail, setShowDetail] = useState<boolean>(false);
-
+  const [currentRow, setCurrentRow] = useState<ServerAPI.PromptListItem>();
+  const [warningModalVisible, setWarningModalVisible] = useState(false);
+  const [warningModalLoading, setWarningModalLoading] = useState(false);
   const actionRef = useRef<ActionType>();
-
-  const [selectedRowsState, setSelectedRows] = useState<ServerAPI.ModelListItem[]>([]);
 
   /**
    * @en-US International configuration
@@ -107,102 +28,60 @@ const ModelList: React.FC = () => {
    * */
   const intl = useIntl();
 
-  const columns: ProColumns<ServerAPI.ModelListItem>[] = [
+  const columns: ProColumns<ServerAPI.PromptListItem>[] = [
     {
       title: (
         <FormattedMessage
-          id="pages.modelList.name"
+          id="pages.promptList.name"
           defaultMessage="name"
         />
       ),
       dataIndex: 'name',
-      // render: (dom, entity) => {
-      //   return (
-      //     <a
-      //       onClick={() => {
-      //         setCurrentRow(entity);
-      //         setShowDetail(true);
-      //       }}
-      //     >
-      //       {dom}
-      //     </a>
-      //   );
-      // },
     },
     {
-      title: <FormattedMessage id="pages.modelList.type" defaultMessage="Description" />,
-      dataIndex: 'type',
-      valueType: 'textarea',
-    },
-    {
-      title: <FormattedMessage id="pages.modelList.desc" defaultMessage="Description" />,
-      dataIndex: 'desc',
+      title: <FormattedMessage id="pages.promptList.prompt" defaultMessage="prompt" />,
+      dataIndex: 'prompt',
       hideInSearch: true,
-      valueType: 'textarea',
     },
     {
       title: (
         <FormattedMessage
           id="pages.modelList.createdAt"
-          defaultMessage="Last scheduled time"
+          defaultMessage="createdAt"
         />
       ),
-      sorter: true,
-      dataIndex: 'updatedAt',
+      dataIndex: 'createdAt',
       valueType: 'dateTime',
-      renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const status = form.getFieldValue('status');
-        if (`${status}` === '0') {
-          return false;
-        }
-        if (`${status}` === '3') {
-          return (
-            <Input
-              {...rest}
-              placeholder={intl.formatMessage({
-                id: 'pages.searchTable.exception',
-                defaultMessage: 'Please enter the reason for the exception!',
-              })}
-            />
-          );
-        }
-        return defaultRender(item);
-      },
+      hideInSearch: true,
     },
     {
       title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
-        <a
-          key="config"
-          onClick={() => {
-            handleUpdateModalOpen(true);
-            setCurrentRow(record);
-          }}
-        >
-          <FormattedMessage id="pages.modelList.detail" defaultMessage="Configuration" />
-        </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          <FormattedMessage
-            id="pages.modelList.del"
-            defaultMessage="Subscribe to alerts"
-          />
-        </a>,
+        <Button key='editBtn' type="text" onClick={() => {
+          setCurrentRow(record);
+          setCreateModalOpen(true);
+        }}>
+          <FormattedMessage id="pages.modelList.edit" defaultMessage="edit" />
+        </Button>,
+        <Button key='delBtn' danger type="text" onClick={() => {
+          setCurrentRow(record);
+          setWarningModalVisible(true);
+        }}>
+          <FormattedMessage id="pages.modelList.del" defaultMessage="del" />
+        </Button>,
       ],
     },
   ];
 
-
-
-
   return (
     <PageContainer>
-      <ProTable<ServerAPI.ModelListItem, API.PageParams>
+      <ProTable<ServerAPI.PromptListItem, API.PageParams>
         rowSelection={false}
         headerTitle={intl.formatMessage({
-          id: 'pages.modelList.title',
-          defaultMessage: 'model pool',
+          id: 'pages.promptList.title',
+          defaultMessage: 'prompt template',
         })}
         actionRef={actionRef}
         rowKey="key"
@@ -214,17 +93,21 @@ const ModelList: React.FC = () => {
             type="primary"
             key="primary"
             onClick={() => {
-              setCurrentRow({
-                name: '',
-                provider: modelService.Provider.openai
-              });
+              setCurrentRow({});
               setCreateModalOpen(true);
             }}
           >
             <PlusOutlined /> <FormattedMessage id="pages.modelList.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={rule}
+        request={async (req) => {
+          const res = await promptService.list(req);
+          return {
+            data: res.data.list,
+            total: res.data.total,
+            success: true,
+          };
+        }}
         columns={columns}
       />
 
@@ -236,41 +119,31 @@ const ModelList: React.FC = () => {
           if (!data) {
             return;
           }
-          // if (id) {
-          //   const newList = chatAppList.map((item) => {
-          //     return item.id === id ? Object.assign(item, data) : item;
-          //   });
-          //   setChatAppList(newList);
-          // } else {
-          //   pageParams.current = 1;
-          //   setSelectItem(undefined);
-          //   loadChatAppList();
-          // }
+          actionRef.current?.reload();
         }}
       />
-      <Drawer
-        width={600}
-        open={showDetail}
-        onClose={() => {
-          setCurrentRow(undefined);
-          setShowDetail(false);
+      <Modal
+        open={warningModalVisible}
+        confirmLoading={warningModalLoading}
+        title="警告"
+        onCancel={() => {
+          setWarningModalVisible(false);
         }}
-        closable={false}
+        onOk={() => {
+          if (!currentRow || !currentRow.id) return;
+          setWarningModalLoading(true);
+          promptService.del(currentRow.id).then(() => {
+            setWarningModalLoading(false);
+            setWarningModalVisible(false);
+            actionRef.current?.reload();
+          }).catch(() => {
+            setWarningModalLoading(false);
+            setWarningModalVisible(false);
+          })
+        }}
       >
-        {currentRow?.name && (
-          <ProDescriptions<API.RuleListItem>
-            column={2}
-            title={currentRow?.name}
-            request={async () => ({
-              data: currentRow || {},
-            })}
-            params={{
-              id: currentRow?.name,
-            }}
-            columns={columns as ProDescriptionsItemProps<ServerAPI.ModelListItem>[]}
-          />
-        )}
-      </Drawer>
+        该操作将会删除该模型，是否继续？
+      </Modal>
     </PageContainer>
   );
 };

@@ -2,20 +2,20 @@ import { Controller, Delete, Get, Post } from '@nestjs/common';
 import { PaginationDto } from '@dto/pagination.dto';
 import { ModelService } from './model.service';
 import { Query, Body } from '@nestjs/common';
-import { CreateDto } from '@dto/model.dto';
+import { CreateDto, DeleteDto, UpdateDto } from '@dto/model.dto';
 
 @Controller('/model')
 export class ModelController {
-  constructor(private readonly service: ModelService) { }
+  constructor(private readonly service: ModelService) {}
 
   /**
    * create model
-   * @param createAppDto
+   * @param CreateDto
    * @returns
    */
   @Post('/create')
   async create(@Body() req: CreateDto) {
-    // return await this.service.create(req);
+    return await this.service.create(req);
   }
 
   /**
@@ -24,38 +24,26 @@ export class ModelController {
    * @returns
    */
   @Get('/list')
-  async list(@Query() paginationDto: PaginationDto) {
-    return await this.service.getList(paginationDto);
+  async list(@Query() req: PaginationDto) {
+    return await this.service.getList(req);
   }
 
   /**
-   * get model detail
-   * @returns
-   */
-  @Get('/detail')
-  async getAppInfoById() {
-    // return await this.service.getAppById(user, appInfoDto.id);
-  }
-
-  /**
-   * 删除应用
-   * @param user
-   * @param id
+   * delete model
    * @returns
    */
   @Delete('/delete')
-  async deleteApp() {
-    // return await this.service.deleteApp(user, appInfoDto.id);
+  async delete(@Query() req: DeleteDto) {
+    return await this.service.delete(req.id);
   }
 
   /**
    * update model
-   * @param user
-   * @param updateAppDto
+   * @param UpdateDto
    * @returns
    */
   @Post('/update')
-  async updateApp() {
-    // return await this.service.updateApp(user, updateAppDto);
+  async update(@Body() req: UpdateDto) {
+    return await this.service.update(req);
   }
 }

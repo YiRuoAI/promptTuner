@@ -7,19 +7,7 @@ export class CreateDto {
   name: string;
   @IsNotEmpty()
   @Type(() => String)
-  brief: string;
-  @IsNotEmpty()
-  @Type(() => String)
-  provider: string;
-  @IsNotEmpty()
-  @Type(() => String)
-  type: string;
-  @IsNotEmpty()
-  @Type(() => Object)
-  endpoints: any;
-  @IsNotEmpty()
-  @Type(() => Object)
-  config: any;
+  prompt: string;
 }
 
 export class UpdateDto extends CreateDto {
