@@ -13,7 +13,7 @@ module.exports = {
     "^@common/(.*)$",
     "^@config/(.*)$",
     "^@dto/(.*)$",
-    "^@entities/(.*)$",
+    "^@database/(.*)$",
     "^@hook/(.*)$",
     "^@modules/(.*)$",
     "^@redisDao/(.*)$",

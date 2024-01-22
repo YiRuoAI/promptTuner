@@ -7,8 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { BigIntTransformer } from './transformers/bigInt.transformer';
-import { DateTransformer } from './transformers/date.transformer';
+import { BigIntTransformer } from '../transformers/bigInt.transformer';
+import { DateTransformer } from '../transformers/date.transformer';
 
 export class BaseEntity {
   @PrimaryColumn({ type: 'bigint', transformer: new BigIntTransformer() })
@@ -17,23 +17,29 @@ export class BaseEntity {
 
   @CreateDateColumn({
     type: 'datetime',
-    default: () => 'CURRENT_TIMESTAMP',
     transformer: new DateTransformer(),
+    nullable: false,
+    precision: null,
+    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
     type: 'datetime',
+    transformer: new DateTransformer(),
+    nullable: false,
+    precision: null,
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
-    transformer: new DateTransformer(),
   })
   updatedAt: Date;
 
   @DeleteDateColumn({
-    type: Number,
+    type: 'datetime',
     nullable: true,
-    default: 0,
+    default: null,
+    precision: null,
+    transformer: new DateTransformer(),
   })
   deletedAt = null;
 }

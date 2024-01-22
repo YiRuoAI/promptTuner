@@ -1,5 +1,6 @@
-import { useDayjs } from '@hook/useDayjs';
 import { ValueTransformer } from 'typeorm';
+
+import { useDayjs } from '../../../../hook/useDayjs';
 
 const { dayjs } = useDayjs();
 
