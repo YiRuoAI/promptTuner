@@ -29,7 +29,7 @@
       "@common/*": ["./src/common/*"],
       "@config/*": ["./src/config/*"],
       "@dto/*": ["./src/dto/*"],
-      "@entities/*": ["./src/entities/*"],
+      "@database/*": ["./src/database/*"],
       "@hook/*": ["./src/hook/*"],
       "@modules/*": ["./src/modules/*"],
       "@adminModules/*": ["./src/adminModules/*"],

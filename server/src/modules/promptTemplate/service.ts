@@ -1,7 +1,7 @@
 import { PaginationDto } from '@dto/pagination.dto';
 import { CreateDto, UpdateDto } from '@dto/promptTemplate.dto';
-import { ChatModelEntity } from '@entities/chatModel.entity';
-import { PromptTemplateEntity } from '@entities/promptTemplate.entity';
+import { ChatModelEntity } from '@database/mysqldb/entities/core//chatModel.entity';
+import { PromptTemplateEntity } from '@database/mysqldb/entities/core//promptTemplate.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListVo } from '@vo/model.vo';

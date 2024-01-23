@@ -1,6 +1,6 @@
 import { CreateDto, UpdateDto } from '@dto/model.dto';
 import { PaginationDto } from '@dto/pagination.dto';
-import { ChatModelEntity } from '@entities/chatModel.entity';
+import { ChatModelEntity } from '@database/mysqldb/entities/core/chatModel.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListVo } from '@vo/model.vo';

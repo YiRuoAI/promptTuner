@@ -1,10 +1,10 @@
-import { ChatModelEntity } from '@entities/chatModel.entity';
-import { PromptTemplateEntity } from '@entities/promptTemplate.entity';
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { entities } from './entities';
+
 const list: DynamicModule[] = [
-  TypeOrmModule.forFeature([ChatModelEntity, PromptTemplateEntity]),
+  TypeOrmModule.forFeature(Object.values(entities)),
 ];
 
 @Global()
