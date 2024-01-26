@@ -10,4 +10,9 @@ export default {
   'menu.exception.server-error': '500',
   'menu.exception.trigger': 'Trigger',
   'menu.list.model-list': 'Model Pool',
+  'menu.list.prompt-template': 'Prompt Template',
+  'menu.list.test': 'Test',
+  'menu.list.test.detail': 'Test Detail',
+  'menu.list.test.result': 'Test Report',
+  'menu.list.test.result.detail': 'Test Report Detail',
 };
