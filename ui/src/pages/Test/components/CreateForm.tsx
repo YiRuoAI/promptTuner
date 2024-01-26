@@ -1,19 +1,15 @@
 import {
   ModalForm,
-  ProForm,
-  ProFormDigit,
-  ProFormSelect,
   ProFormText,
   ProFormTextArea,
 } from '@ant-design/pro-components';
-import { Button, Form } from 'antd';
-import { type FC, useState, useEffect } from 'react';
+import { type FC } from 'react';
 
-import { modelService } from '@/services/server';
+import { testService } from '@/services/server';
 
 type CreateFormModalProps = {
   visible: boolean;
-  current?: API.ModelListItem;
+  current?: ServerAPI.TestListItem;
   onDone: (
     data?: any,
     id?: string,
@@ -22,47 +18,18 @@ type CreateFormModalProps = {
 
 const CreateFormModal: FC<CreateFormModalProps> = (props) => {
   const { visible, current, onDone } = props;
-  // 新增一个状态来控制高级选项的显示和隐藏
-  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
-  const [authType, setAuthType] = useState(modelService.AuthType.Authentication);
 
-
-  // 获取对话模型
-  let cacheChatModelList: Array<{
-    item: API.ModelListItem;
-    value: string;
-  }> = [];
-  const getChatModelList = async () => {
-    // if (cacheChatModelList.length === 0) {
-    //   const res = await chatAppService.listChatModel();
-    //   cacheChatModelList = res.data.list.map((item) => {
-    //     return {
-    //       item,
-    //       value: item.id,
-    //       label: (
-    //         <span>
-    //           {item.name}
-    //           {item.brief && (
-    //             <span style={{ color: 'red' }}>（{item.brief}）</span>
-    //           )}
-    //         </span>
-    //       ),
-    //     };
-    //   });
-    // }
-    // return cacheChatModelList;
-  };
-
-  const createOrUpdateApp = async (
-    values: any,
+  const createOrUpdate = async (
+    value: any,
   ) => {
+    console.log(current)
     if (!current?.id) {
-      // await chatAppService.create(values);
+      await testService.create(value);
     } else {
-      (values as any).id = current.id;
-      // await chatAppService.update(values as any);
+      (value as any).id = current.id;
+      await testService.update(value);
     }
-    onDone(values, current?.id);
+    onDone(value, current?.id);
   };
   return (
     <ModalForm<any>
@@ -70,7 +37,7 @@ const CreateFormModal: FC<CreateFormModalProps> = (props) => {
       title={`${!current?.id ? '新建' : '编辑'}测试`}
       width={640}
       initialValues={current}
-      onFinish={createOrUpdateApp}
+      onFinish={createOrUpdate}
       modalProps={{
         onCancel: () => onDone(),
         destroyOnClose: true,
@@ -79,20 +46,18 @@ const CreateFormModal: FC<CreateFormModalProps> = (props) => {
       <ProFormText
         name="name"
         label="名称"
-        placeholder="请输入测试标题"
+        placeholder="请输入测试名"
         rules={[
-          { required: true, message: '请输入标题' },
-          { max: 2, message: '名称最长2个字符' },
+          { required: true, message: '请输入名称' },
+          { max: 20, message: '名称最长20个字符' },
         ]}
       />
+
       <ProFormTextArea
-        name="name"
+        name="brief"
         label="描述"
-        placeholder="请描述下您测试的内容"
-        rules={[
-          { required: false, message: '请输入描述' },
-          { max: 200, message: '名称最长200个字符' },
-        ]}
+        required
+        placeholder="请输入描述"
       />
     </ModalForm>
   );

@@ -10,7 +10,6 @@ import { Button, Form } from 'antd';
 import { type FC, useState } from 'react';
 
 import { modelService } from '@/services/server';
-import { models } from '@/.umi/plugin-model/model';
 
 type CreateFormModalProps = {
   visible: boolean;

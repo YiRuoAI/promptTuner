@@ -2,11 +2,15 @@ import { Controller, Delete, Get, Post } from '@nestjs/common';
 import { PaginationDto } from '@dto/pagination.dto';
 import { TestService } from './service';
 import { Query, Body } from '@nestjs/common';
-import { CreateDto } from '@dto/model.dto';
+import { CreateDto, DeleteDto, StartJobDto, TestJobDetailDto, UpdateDto } from '@dto/test.dto';
+import { TestResultService } from './testResult.service';
 
 @Controller('/test')
 export class TestController {
-  constructor(private readonly service: TestService) {}
+  constructor(
+    private readonly service: TestService,
+    private readonly resultService: TestResultService,
+    ) {}
 
   /**
    * create model
@@ -15,7 +19,7 @@ export class TestController {
    */
   @Post('/create')
   async create(@Body() req: CreateDto) {
-    // return await this.service.create(req);
+    return await this.service.create(req);
   }
 
   /**
@@ -29,33 +33,60 @@ export class TestController {
   }
 
   /**
-   * get model detail
-   * @returns
-   */
-  @Get('/detail')
-  async getAppInfoById() {
-    // return await this.service.getAppById(user, appInfoDto.id);
-  }
-
-  /**
-   * 删除应用
+   * 删除测试
    * @param user
    * @param id
    * @returns
    */
   @Delete('/delete')
-  async deleteApp() {
-    // return await this.service.deleteApp(user, appInfoDto.id);
+  async delete(@Query() req: DeleteDto) {
+    return await this.service.delete(req.id);
   }
 
   /**
-   * update model
-   * @param user
-   * @param updateAppDto
+   * update test
    * @returns
    */
   @Post('/update')
-  async updateApp() {
-    // return await this.service.updateApp(user, updateAppDto);
+  async update(@Body() req: UpdateDto) {
+    return await this.service.update(req);
+  }
+
+  /**
+   * get detail
+   * @returns
+   */
+  @Get('/detail')
+  async detail(@Query() req: DeleteDto) {
+    return await this.service.getDetail(req.id);
+  }
+
+  /**
+   * update test
+   * @returns
+   */
+  @Post('/start-job')
+  async startJob(@Body() req: StartJobDto) {
+    return await this.service.startJob(req.testId);
+  }
+
+  /**
+   * get model list
+   * @param paginationDto
+   * @returns
+   */
+  @Get('/list-test-job')
+  async listTestjob(@Query() paginationDto: PaginationDto) {
+    return await this.resultService.getList(paginationDto);
+  }
+  
+  /**
+   * get model list
+   * @param paginationDto
+   * @returns
+   */
+  @Get('/test-job-detail')
+  async testJobDetail(@Query() req: TestJobDetailDto) {
+    return await this.resultService.getTestJobDetail(req.testJobId);
   }
 }

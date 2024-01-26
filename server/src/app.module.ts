@@ -8,12 +8,14 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { WrapResponseInterceptor } from '@interceptors/wrapResponse.interceptor';
 import { CustomExceptionFilter } from '@filters/customException.filter';
 import { database } from './database';
+import { ScheduleModule } from '@nestjs/schedule';
 
 const importsArr = [
   ...database,
   ModelModule,
   PromptTemplateModule,
   TestModule,
+  ScheduleModule.forRoot(),
 ];
 
 @Module({

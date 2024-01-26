@@ -31,7 +31,7 @@ declare namespace ServerAPI {
     current?: number;
     pageSize?: number;
   }
-  
+
   type PromptListItem = {
     id?: string;
     name?: string;
@@ -53,6 +53,90 @@ declare namespace ServerAPI {
   type listPromptReq = {
     current?: number;
     pageSize?: number;
+  }
+
+  type ModelConfigItem = {
+    name: string;
+    modelId: string;
+    conversationConfig: ConversationConfigItem[];
+  }
+
+  enum ConversationType {
+    // 使用prompt template
+    promptTemplate = 'promptTemplate',
+    // 自定义
+    custom = 'custom',
+  }
+
+  type ConversationConfigItem = {
+    type: ConversationType;
+    promptTemplateId?: string;
+    prompt?: string;
+  }
+
+  type InputConfigItem = {
+    input: string;
+  }
+
+  type TestListItem = {
+    id?: string;
+    name?: string;
+    brief?: string;
+    createdAt?: number;
+    modelConfig?: ModelConfigItem[];
+    inputConfig?: InputConfigItem[];
+  }
+
+
+
+  type createTestReq = {
+    name: string;
+    brief?: string;
+  }
+
+  type updateTestReq = {
+    id: string;
+    name?: string;
+    brief?: string;
+    modelConfig?: ModelConfigItem[];
+    inputConfig?: InputConfigItem[];
+  }
+
+  type listTestReq = {
+    current?: number;
+    pageSize?: number;
+  }
+
+  type listTestJobReq = {
+    current?: number;
+    pageSize?: number;
+  }
+
+  type TestJobDetailReq = {
+    testJobId: string;
+  }
+
+  type TestJobListItem = {
+    id: string;
+    createdAt?: number;
+    status?: number;
+    modelConfig?: ModelConfigItem[];
+    inputConfig?: InputConfigItem[];
+  }
+
+  type TestJobItemListItem = {
+    id: string;
+    createdAt?: number;
+    status?: number;
+    modelSnapshot?: {
+      name: string;
+    }
+    messages?: any[];
+  }
+
+  type TestJobDetail = {
+    list: TestJobItemListItem[];
+    job: TestJobListItem;
   }
 
 }

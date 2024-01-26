@@ -1,30 +1,22 @@
-import { rule } from '@/services/ant-design-pro/api';
-import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import {
   PageContainer,
-  ProDescriptions,
   ProTable,
 } from '@ant-design/pro-components';
-import { FormattedMessage, useIntl, history } from '@umijs/max';
-import { Button, Drawer, Input } from 'antd';
-import React, { useRef, useState } from 'react';
-import CreateFormModal from './components/CreateForm';
-import { modelService } from '@/services/server';
+import { useIntl, useLocation } from '@umijs/max';
+import React, { useEffect, useRef, useState } from 'react';
+import { testService } from '@/services/server';
 
 const ModelList: React.FC = () => {
-  /**
-   * @en-US Pop-up window of new window
-   * @zh-CN 新建窗口的弹窗
-   *  */
-  const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
-  const [currentRow, setCurrentRow] = useState<ServerAPI.ModelListItem>();
+  const [current, setCurrent] = useState<any>();
+  const [columns, setColumns] = useState<ProColumns<any>[]>();
 
-  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get('id');
 
   const actionRef = useRef<ActionType>();
 
-  const [selectedRowsState, setSelectedRows] = useState<ServerAPI.ModelListItem[]>([]);
 
   /**
    * @en-US International configuration
@@ -32,152 +24,59 @@ const ModelList: React.FC = () => {
    * */
   const intl = useIntl();
 
-  const columns: ProColumns<ServerAPI.ModelListItem>[] = [
-    {
-      title: (
-        <FormattedMessage
-          id="pages.test.title"
-          defaultMessage="title"
-        />
-      ),
-      dataIndex: 'title',
-    },
-    {
-      title: <FormattedMessage id="pages.modelList.desc" defaultMessage="Description" />,
-      dataIndex: 'desc',
-      hideInSearch: true,
-      valueType: 'textarea',
-    },
-    {
-      title: (
-        <FormattedMessage
-          id="pages.modelList.createdAt"
-          defaultMessage="Last scheduled time"
-        />
-      ),
-      sorter: true,
-      dataIndex: 'createdAt',
-      valueType: 'dateTime',
-      renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const status = form.getFieldValue('status');
-        if (`${status}` === '0') {
-          return false;
-        }
-        if (`${status}` === '3') {
-          return (
-            <Input
-              {...rest}
-              placeholder={intl.formatMessage({
-                id: 'pages.searchTable.exception',
-                defaultMessage: 'Please enter the reason for the exception!',
-              })}
-            />
-          );
-        }
-        return defaultRender(item);
+  const getResult = async () => {
+    if (!id) {
+      return;
+    }
+    const res = await testService.getTestJobDetail({ testJobId: id });
+    let tmpColumns: ProColumns<any>[] = [
+      {
+        title: '输入值',
+        dataIndex: 'input',
       },
-    },
-    {
-      title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
-      dataIndex: 'option',
-      valueType: 'option',
-      render: (_, record) => [
-        <a
-          key="config"
-          onClick={() => {
-            history.push(`/test/detail?id=${record.id}`)
-          }}
-        >
-          <FormattedMessage id="pages.modelList.detail" defaultMessage="Configuration" />
-        </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          <FormattedMessage
-            id="pages.modelList.del"
-            defaultMessage="Subscribe to alerts"
-          />
-        </a>,
-      ],
-    },
-  ];
+    ];
+    // 遍历res.list，将其设置刀columns中
+    let testResult: any[] = [];
+    const inputConfig = res.data.job.inputConfig ?? [];
+    res.data.list.forEach((item, index) => {
+      tmpColumns.push({
+        title: item.modelSnapshot?.name,
+        dataIndex: item.id,
+        render: (_, record) => {
+          // 数组是用foreach还是each?
+          const data: any[] = record[item.id] ?? [];
+          let index = 0;
+          return data.map((item: any) => {
+            return <div key={index++}>{item.role}:{item.content}</div>
+          })
+        }
+      });
+      testResult.push({
+        input: inputConfig[index].input,
+        [item.id]: item.messages,
+      })
+    });
+    setColumns(tmpColumns)
+    setCurrent(testResult)
+  }
 
-
+  useEffect(() => {
+    getResult();
+  }, []);
 
 
   return (
     <PageContainer>
-      <ProTable<ServerAPI.ModelListItem, API.PageParams>
+      <ProTable<any, any>
         rowSelection={false}
-        headerTitle={intl.formatMessage({
-          id: 'pages.test.title',
-          defaultMessage: 'test',
-        })}
+        headerTitle="测试报告"
         actionRef={actionRef}
         rowKey="key"
-        search={{
-          labelWidth: 120,
-        }}
-        toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            onClick={() => {
-              setCurrentRow({
-                name: '',
-                provider: modelService.Provider.openai
-              });
-              setCreateModalOpen(true);
-            }}
-          >
-            <PlusOutlined /> <FormattedMessage id="pages.modelList.new" defaultMessage="New" />
-          </Button>,
-        ]}
-        request={rule}
+        search={false}
         columns={columns}
+        dataSource={current}
+        pagination={false}
       />
-
-      <CreateFormModal
-        visible={createModalOpen}
-        current={currentRow}
-        onDone={(data) => {
-          setCreateModalOpen(false);
-          if (!data) {
-            return;
-          }
-          // if (id) {
-          //   const newList = chatAppList.map((item) => {
-          //     return item.id === id ? Object.assign(item, data) : item;
-          //   });
-          //   setChatAppList(newList);
-          // } else {
-          //   pageParams.current = 1;
-          //   setSelectItem(undefined);
-          //   loadChatAppList();
-          // }
-        }}
-      />
-      <Drawer
-        width={600}
-        open={showDetail}
-        onClose={() => {
-          setCurrentRow(undefined);
-          setShowDetail(false);
-        }}
-        closable={false}
-      >
-        {currentRow?.name && (
-          <ProDescriptions<API.RuleListItem>
-            column={2}
-            title={currentRow?.name}
-            request={async () => ({
-              data: currentRow || {},
-            })}
-            params={{
-              id: currentRow?.name,
-            }}
-            columns={columns as ProDescriptionsItemProps<ServerAPI.ModelListItem>[]}
-          />
-        )}
-      </Drawer>
     </PageContainer>
   );
 };

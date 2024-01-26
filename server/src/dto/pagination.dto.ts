@@ -7,7 +7,7 @@ export class PaginationDto {
   @IsOptional()
   page = 1;
   @Min(1)
-  @Max(99)
+  @Max(9999)
   @Type(() => Number)
   @IsOptional()
   pageSize = 20;
