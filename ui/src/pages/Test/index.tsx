@@ -21,7 +21,6 @@ const ModelList: React.FC = () => {
   const [warningModalLoading, setWarningModalLoading] = useState(false);
   const actionRef = useRef<ActionType>();
 
-
   /**
    * @en-US International configuration
    * @zh-CN 国际化配置

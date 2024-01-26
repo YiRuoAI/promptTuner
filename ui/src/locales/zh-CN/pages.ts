@@ -81,4 +81,6 @@ export default {
   'pages.promptList.prompt': '模板',
   'pages.promptList.name': '模板名',
   'pages.test.title': '测试列表',
+  'pages.welcome.title': '欢迎使用PromptTuner',
+  'pages.welcome.description': 'Prompt Tuner是一款强大的工具，旨在帮助您评估不同模型、不同参数和不同提示（prompt）在自然语言处理任务中的效果。通过使用Prompt Tuner，您可以轻松测试和比较不同组合对模型性能的影响。这一工具以表格的形式清晰呈现出不同实验的结果，使您能够直观地了解每个配置的表现。无论您是在优化语言生成、文本分类还是其他NLP任务，Prompt Tuner都将成为您的得力助手，帮助您更好地理解和调整模型的行为。',
 };
