@@ -67,4 +67,7 @@ export default {
   'pages.searchTable.tenThousand': '0000',
   'pages.searchTable.batchDeletion': 'batch deletion',
   'pages.searchTable.batchApproval': 'batch approval',
+  'pages.modelList.provider.openai': 'openai',
+  'pages.modelList.provider.azure': 'azure',
+  'pages.modelList.provider.yiruocloud': 'yiruocloud',
 };

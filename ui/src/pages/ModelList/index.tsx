@@ -42,7 +42,7 @@ const ModelList: React.FC = () => {
       dataIndex: 'provider',
     },
     {
-      title: <FormattedMessage id="pages.modelList.type" defaultMessage="Description" />,
+      title: <FormattedMessage id="pages.modelList.type" defaultMessage="Type" />,
       dataIndex: 'type',
       valueType: 'textarea',
     },
@@ -55,7 +55,7 @@ const ModelList: React.FC = () => {
     {
       title: (
         <FormattedMessage
-          id="pages.modelList.createdAt"
+          id="pages.list.createdAt"
           defaultMessage="createdAt"
         />
       ),
@@ -72,13 +72,13 @@ const ModelList: React.FC = () => {
           setCurrentRow(record);
           setCreateModalOpen(true);
         }}>
-          <FormattedMessage id="pages.modelList.edit" defaultMessage="edit" />
+          <FormattedMessage id="pages.btns.edit" defaultMessage="edit" />
         </Button>,
         <Button key='delBtn' danger type="text" onClick={() => {
           setCurrentRow(record);
           setWarningModalVisible(true);
         }}>
-          <FormattedMessage id="pages.modelList.del" defaultMessage="del" />
+          <FormattedMessage id="pages.btns.del" defaultMessage="del" />
         </Button>,
       ],
     },
@@ -154,7 +154,13 @@ const ModelList: React.FC = () => {
           })
         }}
       >
-        该操作将会删除该模型，是否继续？
+        {intl.formatMessage({
+          id: 'pages.modelList.delWarning',
+          defaultMessage: 'Are you sure you want to delete {name}?',
+        }, {
+          name: currentRow?.name
+        })
+        }
       </Modal>
     </PageContainer>
   );

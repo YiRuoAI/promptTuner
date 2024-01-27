@@ -9,7 +9,7 @@ import {
   ProFormText,
   ProFormTextArea,
 } from '@ant-design/pro-components';
-import { useIntl, useLocation, history } from '@umijs/max';
+import { useIntl, useLocation, history, FormattedMessage } from '@umijs/max';
 import { Button, Descriptions, DescriptionsProps, message } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { modelService, promptService, testService } from '@/services/server';
@@ -80,7 +80,9 @@ const ModelList: React.FC = () => {
                 return;
               }
               history.push(`/test/result?id=${current?.id}`)
-            }}>测试报告</Button>
+            }}>
+              <FormattedMessage id="pages.test.reportBtn" defaultMessage="Test Report" />
+            </Button>
             <Button
               style={{ "marginLeft": "10px" }}
               type="primary"

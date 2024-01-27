@@ -46,8 +46,8 @@ const ModelList: React.FC = () => {
     {
       title: (
         <FormattedMessage
-          id="pages.modelList.createdAt"
-          defaultMessage="Last scheduled time"
+          id="pages.list.createdAt"
+          defaultMessage="createdAt"
         />
       ),
       sorter: true,
@@ -73,38 +73,35 @@ const ModelList: React.FC = () => {
       },
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
+      title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="" />,
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
         <Button key='detailBtn' type="primary" onClick={() => {
           history.push(`/test/detail?id=${record.id}`)
         }}>
-          <FormattedMessage id="pages.modelList.detail1" defaultMessage="配置" />
+          <FormattedMessage id="pages.test.settingBtn" defaultMessage="Setting" />
         </Button>,
         <Button key='resultBtn' type="text" onClick={() => {
-          history.push(`/test/detail?id=${record.id}`)
+          history.push(`/test/result?id=${record.id}`)
         }}>
-          <FormattedMessage id="pages.modelList.detail1" defaultMessage="测试报告" />
+          <FormattedMessage id="pages.test.reportBtn" defaultMessage="Test Report" />
         </Button>,
         <Button key='editBtn' type="text" onClick={() => {
           setCurrentRow(record);
           setCreateModalOpen(true);
         }}>
-          <FormattedMessage id="pages.modelList.edit" defaultMessage="edit" />
+          <FormattedMessage id="pages.btns.edit" defaultMessage="edit" />
         </Button>,
         <Button key='delBtn' danger type="text" onClick={() => {
           setCurrentRow(record);
           setWarningModalVisible(true);
         }}>
-          <FormattedMessage id="pages.modelList.del" defaultMessage="del" />
+          <FormattedMessage id="pages.btns.del" defaultMessage="del" />
         </Button>,
       ],
     },
   ];
-
-
-
 
   return (
     <PageContainer>

@@ -46,7 +46,7 @@ const ModelList: React.FC = () => {
     {
       title: (
         <FormattedMessage
-          id="pages.modelList.createdAt"
+          id="pages.list.createdAt"
           defaultMessage="createdAt"
         />
       ),
@@ -63,13 +63,13 @@ const ModelList: React.FC = () => {
           setCurrentRow(record);
           setCreateModalOpen(true);
         }}>
-          <FormattedMessage id="pages.modelList.edit" defaultMessage="edit" />
+          <FormattedMessage id="pages.btns.edit" defaultMessage="edit" />
         </Button>,
         <Button key='delBtn' danger type="text" onClick={() => {
           setCurrentRow(record);
           setWarningModalVisible(true);
         }}>
-          <FormattedMessage id="pages.modelList.del" defaultMessage="del" />
+          <FormattedMessage id="pages.btns.del" defaultMessage="del" />
         </Button>,
       ],
     },
