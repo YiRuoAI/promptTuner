@@ -47,12 +47,12 @@ export default [
       },
       {
         path: '/test/result',
-        name: 'detail',
+        name: 'result',
         component: './Test/TestResult',
       },
       {
         path: '/test/result/detail',
-        name: 'detail',
+        name: 'result.detail',
         component: './Test/TestResultDetail',
       },
     ],
