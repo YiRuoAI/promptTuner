@@ -63,13 +63,13 @@ declare namespace ServerAPI {
 
   enum ConversationType {
     // 使用prompt template
-    promptTemplate = 'promptTemplate',
+    promptTemplate,
     // 自定义
-    custom = 'custom',
+    custom,
   }
 
   type ConversationConfigItem = {
-    type: ConversationType;
+    type: ConversationType | string;
     promptTemplateId?: string;
     prompt?: string;
   }

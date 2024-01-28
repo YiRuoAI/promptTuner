@@ -10,9 +10,10 @@ import {
   ProFormTextArea,
 } from '@ant-design/pro-components';
 import { useIntl, useLocation, history, FormattedMessage } from '@umijs/max';
-import { Button, Descriptions, DescriptionsProps, message } from 'antd';
+import { Button, Descriptions, DescriptionsProps, message, Form } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { modelService, promptService, testService } from '@/services/server';
+import { ConversationType } from '@/services/server/test';
 
 
 const ModelList: React.FC = () => {
@@ -20,6 +21,7 @@ const ModelList: React.FC = () => {
   // 模型列表
   const [modelList, setModelList] = useState<ServerAPI.ModelListItem[]>([]);
   const [promptTemplateList, setPromptTemplateList] = useState<ServerAPI.PromptListItem[]>([]);
+  const [form] = Form.useForm();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get('id');
@@ -27,7 +29,19 @@ const ModelList: React.FC = () => {
 
   const getDetail = async (id: string) => {
     const res = await testService.detail(id);
+    if (!res.data.modelConfig || res.data.modelConfig.length === 0) {
+      res.data.modelConfig = [{
+        name: '',
+        modelId: '',
+        conversationConfig: [
+          // 在antd pro中，select不兼容number的，这里用字符串
+          { type: ConversationType.custom + '', promptTemplateId: '', prompt: '' },
+        ],
+      }];
+      res.data.inputConfig = [{ input: '' }];
+    }
     setCurrent(res.data);
+
     formRef.current?.setFieldsValue(res.data);
   }
   const getModelList = async () => {
@@ -38,6 +52,7 @@ const ModelList: React.FC = () => {
     const res = await promptService.list({ current: 1, pageSize: 9999 });
     setPromptTemplateList(res.data.list);
   }
+
   useEffect(() => {
     if (id) {
       getDetail(id);
@@ -104,10 +119,36 @@ const ModelList: React.FC = () => {
       <ProForm
         layout="horizontal"
         formRef={formRef}
+        form={form}
+        onValuesChange={(changedValues, allValues) => {
+          // changedValues.modelConfig长度是多少，那么inputConfig就要有多少个
+          const inputConfig = allValues.inputConfig;
+          const modelConfig = allValues.modelConfig;
+          if (inputConfig.length < modelConfig.length) {
+            const addCount = modelConfig.length - inputConfig.length;
+            for (let i = 0; i < addCount; i++) {
+              inputConfig.push({ input: '' });
+            }
+            form.setFieldsValue({ inputConfig });
+          }
+          if (inputConfig.length > modelConfig.length) {
+            const delCount = inputConfig.length - modelConfig.length;
+            for (let i = 0; i < delCount; i++) {
+              inputConfig.pop();
+            }
+            form.setFieldsValue({ inputConfig });
+          }
+        }}
         onFinish={async (values) => {
           if (!current?.id) {
             return false;
           }
+          // 将conversationType转为number
+          values.modelConfig.forEach((item: any) => {
+            item.conversationConfig.forEach((conversation: any) => {
+              conversation.type = Number(conversation.type);
+            });
+          });
           const res = await testService.update({ ...values, id: current?.id })
           if (res.code === 0) {
             message.success('保存成功');
@@ -134,15 +175,6 @@ const ModelList: React.FC = () => {
               {listDom}
             </ProCard>
           )}
-          // creatorRecord={{ name: '', items: [{ name: '' }] }}
-          initialValue={[
-            {
-              name: '',
-              modelId: '',
-              conversationConfig: [
-                { type: '1', templateId: '', prompt: '' },
-              ],
-            }]}
         >
           <ProFormText
             style={{ padding: 0 }}
@@ -233,6 +265,7 @@ const ModelList: React.FC = () => {
           min={1}
           creatorButtonProps={false}
           copyIconProps={false}
+          deleteIconProps={false}
           itemRender={({ listDom, action }, { index }) => (
             <ProCard
               bordered
@@ -244,7 +277,6 @@ const ModelList: React.FC = () => {
               {listDom}
             </ProCard>
           )}
-          initialValue={[{ input: '' }]}
         >
           <ProFormText
             style={{ padding: 0 }}
