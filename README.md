@@ -32,3 +32,8 @@ cd ui && pnpm start
 5. run test
 6. view test result
 
+## License
+PromotTuner is MIT licensed.
+
+
+
