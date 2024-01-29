@@ -33,8 +33,8 @@ const ModelList: React.FC = () => {
     {
       title: (
         <FormattedMessage
-          id="pages.modelList.createdAt"
-          defaultMessage="Last scheduled time"
+          id="pages.list.createdAt"
+          defaultMessage="createdAt"
         />
       ),
       hideInSearch: true,
@@ -96,7 +96,7 @@ const ModelList: React.FC = () => {
           setCurrentRow(record);
           setWarningModalVisible(true);
         }}>
-          <FormattedMessage id="pages.modelList.del" defaultMessage="del" />
+          <FormattedMessage id="pages.btns.del" defaultMessage="del" />
         </Button>,
       ],
     },
@@ -106,7 +106,10 @@ const ModelList: React.FC = () => {
     <PageContainer>
       <ProTable<ServerAPI.ModelListItem, API.PageParams>
         rowSelection={false}
-        headerTitle="测试报告列表"
+        headerTitle={intl.formatMessage({
+          id: 'pages.resultList.title',
+          defaultMessage: 'Test Report List',
+        })}
         actionRef={actionRef}
         rowKey="key"
         search={false}

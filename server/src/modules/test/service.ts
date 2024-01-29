@@ -19,6 +19,7 @@ import {
 } from '@database/mysqldb/entities/core/testJobItem.entity';
 import { useChatModel } from '@hook/useChatModel';
 import { MessageType } from '@hook/useChatModel/models/baseChatModel';
+import { PromptTemplateEntity } from '@database/mysqldb/entities/core/promptTemplate.entity';
 
 @Injectable()
 export class TestService {
@@ -31,6 +32,8 @@ export class TestService {
     private readonly testJobRepository: Repository<TestJobEntity>,
     @InjectRepository(TestJobItemEntity)
     private readonly testJobItemRepository: Repository<TestJobItemEntity>,
+    @InjectRepository(PromptTemplateEntity)
+    private readonly promptTemplateRepository: Repository<PromptTemplateEntity>,
     private readonly entityManager: EntityManager,
   ) { }
 
@@ -84,9 +87,14 @@ export class TestService {
     const test = await this.testRepository.findOne({
       where: { id },
     });
-    console.log(test)
     if (!test) {
       throw new Error('test not found');
+    }
+    if (test.inputConfig === null) {
+      test.inputConfig = [];
+    }
+    if (test.modelConfig === null) {
+      test.modelConfig = [];
     }
     return test;
   }
@@ -126,7 +134,7 @@ export class TestService {
     let promptTemplates = [];
     const promptMap = {};
     if (promptTemplateIds.length > 0) {
-      promptTemplates = await this.chatModelRepository.find({
+      promptTemplates = await this.promptTemplateRepository.find({
         where: { id: In(promptTemplateIds) },
       });
       if (promptTemplates.length === 0) {
@@ -244,9 +252,17 @@ export class TestService {
       for (let j = 0; j < item.prompts.length; j++) {
         messages.push({ role: 'user', content: item.prompts[j] });
         const res = await chatModel.completions({
-          model: item.modelSnapshot.model,
+          model: item.modelSnapshot.type,
           messages,
-          apikey: item.modelSnapshot.endpoints.apiKey,
+          temperature: item.modelSnapshot.config?.temperature,
+          topP: item.modelSnapshot.config?.topP,
+          maxTokens: item.modelSnapshot.config?.maxTokens,
+          presencePenalty: item.modelSnapshot.config?.presencePenalty,
+          frequencyPenalty: item.modelSnapshot.config?.frequencyPenalty,
+          url: item.modelSnapshot.endpoints.url,
+          apikey: item.modelSnapshot.endpoints?.apiKey,
+          appKey: item.modelSnapshot.endpoints?.appKey,
+          appSecret: item.modelSnapshot.endpoints?.appSecret,
         });
         if (!res.state) {
           // 更新任务为失败

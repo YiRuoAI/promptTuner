@@ -9,7 +9,9 @@ export class CompletionsReq {
   presencePenalty?: number;
   maxTokens?: number;
   url?: string;
-  apikey: string;
+  apikey?: string;
+  appKey?: string;
+  appSecret?: string;
 }
 
 export class CompletionsRes {

@@ -1,5 +1,12 @@
 import { getIntl, request } from '@umijs/max';
 
+export enum ConversationType {
+  // 使用prompt template
+  promptTemplate,
+  // 自定义
+  custom,
+}
+
 export async function create(req: ServerAPI.createTestReq) {
   return request<{ data: string }>('/test/create', {
     method: 'POST',

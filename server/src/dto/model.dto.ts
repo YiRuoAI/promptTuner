@@ -1,11 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateDto {
   @IsNotEmpty()
   @Type(() => String)
   name: string;
-  @IsNotEmpty()
+  @IsOptional()
   @Type(() => String)
   brief: string;
   @IsNotEmpty()
@@ -17,7 +17,7 @@ export class CreateDto {
   @IsNotEmpty()
   @Type(() => Object)
   endpoints: any;
-  @IsNotEmpty()
+  @IsOptional()
   @Type(() => Object)
   config: any;
 }
