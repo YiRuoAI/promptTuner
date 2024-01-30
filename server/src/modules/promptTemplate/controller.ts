@@ -2,7 +2,7 @@ import { Controller, Delete, Get, Post } from '@nestjs/common';
 import { PaginationDto } from '@dto/pagination.dto';
 import { PromptTemplateService } from './service';
 import { Query, Body } from '@nestjs/common';
-import { CreateDto, DeleteDto, UpdateDto } from '@dto/promptTemplate.dto';
+import { CreateDto, DeleteDto, ListDto, UpdateDto } from '@dto/promptTemplate.dto';
 
 @Controller('/prompt-template')
 export class PromptTemplateController {
@@ -24,7 +24,7 @@ export class PromptTemplateController {
    * @returns
    */
   @Get('/list')
-  async list(@Query() req: PaginationDto) {
+  async list(@Query() req: ListDto) {
     return await this.service.getList(req);
   }
 

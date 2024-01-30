@@ -77,14 +77,14 @@ const ModelList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<ServerAPI.PromptListItem, API.PageParams>
+      <ProTable<ServerAPI.PromptListItem, ServerAPI.listPromptReq>
         rowSelection={false}
         headerTitle={intl.formatMessage({
           id: 'pages.promptList.title',
           defaultMessage: 'prompt template',
         })}
         actionRef={actionRef}
-        rowKey="key"
+        rowKey="id"
         search={{
           labelWidth: 120,
         }}
@@ -102,11 +102,11 @@ const ModelList: React.FC = () => {
         ]}
         request={async (req) => {
           const res = await promptService.list(req);
-          return {
-            data: res.data.list,
-            total: res.data.total,
-            success: true,
-          };
+            return {
+              data: res.data.list,
+              total: res.data.total,
+              success: true,
+            }; 
         }}
         columns={columns}
       />

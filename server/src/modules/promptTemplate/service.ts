@@ -1,11 +1,11 @@
 import { PaginationDto } from '@dto/pagination.dto';
-import { CreateDto, UpdateDto } from '@dto/promptTemplate.dto';
+import { CreateDto, ListDto, UpdateDto } from '@dto/promptTemplate.dto';
 import { ChatModelEntity } from '@database/mysqldb/entities/core//chatModel.entity';
 import { PromptTemplateEntity } from '@database/mysqldb/entities/core//promptTemplate.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListVo } from '@vo/model.vo';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 @Injectable()
 export class PromptTemplateService {
@@ -15,10 +15,21 @@ export class PromptTemplateService {
   ) {}
 
   // 获取模型的列表
-  async getList(req: PaginationDto) {
-    const list = await this.promptTemplateRepository.find();
+  async getList(req: ListDto) {
+    const where: any = {};
+    if (req.name) {
+      where.name = Like(`%${req.name}%`);
+    }
+    const [list, total] = await this.promptTemplateRepository.findAndCount({
+      where,
+      skip: (req.page - 1) * req.pageSize,
+      take: req.pageSize,
+    });
     const vo = new ListVo();
     vo.list = list;
+    vo.pageSize = req.pageSize;
+    vo.page = req.page;
+    vo.total = total;
     return vo;
   }
 
