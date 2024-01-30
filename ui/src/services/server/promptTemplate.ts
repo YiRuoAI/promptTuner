@@ -1,4 +1,4 @@
-import { getIntl, request } from '@umijs/max';
+import { request } from '@umijs/max';
 
 export async function create(req: ServerAPI.createPromptReq) {
   return request<{ data: string }>('/prompt-template/create', {
@@ -27,6 +27,7 @@ export async function list(req: ServerAPI.listPromptReq): Promise<{ data: { list
     params: {
       page: req.current,
       pageSize: req.pageSize,
+      name: req.name,
     },
   });
 }

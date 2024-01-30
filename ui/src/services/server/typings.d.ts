@@ -56,6 +56,7 @@ declare namespace ServerAPI {
   type listPromptReq = {
     current?: number;
     pageSize?: number;
+    name?: string;
   }
 
   type ModelConfigItem = {
