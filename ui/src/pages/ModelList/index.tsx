@@ -93,7 +93,7 @@ const ModelList: React.FC = () => {
           defaultMessage: 'model pool',
         })}
         actionRef={actionRef}
-        rowKey="key"
+        rowKey="id"
         search={{
           labelWidth: 120,
         }}
@@ -123,7 +123,7 @@ const ModelList: React.FC = () => {
         columns={columns}
       />
 
-      <CreateFormModal
+      {createModalOpen && <CreateFormModal
         visible={createModalOpen}
         current={currentRow}
         onDone={(data) => {
@@ -133,7 +133,7 @@ const ModelList: React.FC = () => {
           }
           actionRef.current?.reload();
         }}
-      />
+      />}
       <Modal
         open={warningModalVisible}
         confirmLoading={warningModalLoading}

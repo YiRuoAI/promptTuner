@@ -7,7 +7,7 @@ import {
   ProFormTextArea,
 } from '@ant-design/pro-components';
 import { Button, Form } from 'antd';
-import { type FC, useState } from 'react';
+import { type FC, useState, useEffect } from 'react';
 
 import { modelService } from '@/services/server';
 import { FormattedMessage, useIntl } from '@umijs/max';
@@ -33,6 +33,15 @@ const CreateFormModal: FC<CreateFormModalProps> = (props) => {
   const intl = useIntl();
   const [form] = Form.useForm();
   const updateProviderUrl = (newValue: string) => {
+    /**
+   * @en-US Traverse the enumeration value, if it is the user-defined URL, do not update
+   * @zh-CN 如果是用户自定义的url，则不进行自动切换
+   * */
+    const oldUrl = form.getFieldValue(['endpoints', 'url']);
+    const isUserDefinedUrl = Object.values(modelService.ProviderUrl).some((url) => url === oldUrl);
+    if (!isUserDefinedUrl) {
+      return;
+    }
     form.setFieldsValue({
       endpoints: {
         url: newValue,
@@ -51,15 +60,28 @@ const CreateFormModal: FC<CreateFormModalProps> = (props) => {
     }
     onDone(value, current?.id);
   };
+  useEffect(() => {
+    if(current){
+      form.setFieldsValue(current);
+      switch (current.provider) {
+        case modelService.Provider.openai:
+        case modelService.Provider.azure:
+          setAuthType(modelService.AuthType.Authentication);
+          break;
+        case modelService.Provider.yiruocloud:
+          setAuthType(modelService.AuthType.Sign);
+          break;
+      }
+    }
+  }, []);
   return (
     <ModalForm<any>
       open={visible}
       form={form}
-      title={`${!current?.id ? 
-        intl.formatMessage({ id: 'pages.model.create.title.create', defaultMessage: 'create model' }) 
+      title={`${!current?.id ?
+        intl.formatMessage({ id: 'pages.model.create.title.create', defaultMessage: 'create model' })
         : intl.formatMessage({ id: 'pages.model.create.title.update', defaultMessage: 'update model' })}`}
       width={640}
-      initialValues={current}
       onFinish={createOrUpdateApp}
       modalProps={{
         onCancel: () => onDone(),
@@ -168,7 +190,7 @@ const CreateFormModal: FC<CreateFormModalProps> = (props) => {
           defaultMessage: 'please enter brief',
         })}
         rules={[
-          { max: 200, message: intl.formatMessage({ id: 'pages.model.create.brief.max', defaultMessage: 'brief max 200 char' })},
+          { max: 200, message: intl.formatMessage({ id: 'pages.model.create.brief.max', defaultMessage: 'brief max 200 char' }) },
         ]}
       />
 
