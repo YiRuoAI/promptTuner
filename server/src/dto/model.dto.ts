@@ -1,5 +1,18 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional } from 'class-validator';
+import { PaginationDto } from './pagination.dto';
+
+export class ListDto extends PaginationDto {
+  @IsOptional()
+  @Type(() => String)
+  name: string;
+  @IsOptional()
+  @Type(() => String)
+  provider: string;
+  @IsOptional()
+  @Type(() => String)
+  type: string;
+}
 
 export class CreateDto {
   @IsNotEmpty()
