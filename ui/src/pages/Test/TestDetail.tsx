@@ -278,11 +278,14 @@ const ModelList: React.FC = () => {
             </ProCard>
           )}
         >
-          <ProFormText
+          <ProFormTextArea
             style={{ padding: 0 }}
             width="md"
             name="input"
-            label="输入值"
+            label="变量组"
+            placeholder="请输入变量组，每一行是一个变量，例如：name=张三，将会自动替换模板中的${name}"
+            tooltip="每一行是一个变量，例如：name=张三，将会自动替换模板中的${name}"
+
           />
 
         </ProFormList>
