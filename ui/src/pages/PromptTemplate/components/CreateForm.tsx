@@ -56,7 +56,8 @@ const CreateFormModal: FC<CreateFormModalProps> = (props) => {
         name="prompt"
         label="模板"
         required
-        placeholder="请输入模板"
+        placeholder="请输入模板，模板中的变量请用${}包裹，例如：${name}"
+        tooltip="模板中的变量请用${}包裹，例如：${name}"
       />
     </ModalForm>
   );
