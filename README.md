@@ -17,6 +17,14 @@ cd server && pnpm install
 cd ui && pnpm install
 ```
 
+## Configuration
+
+```
+cd server && cp .env.example .env
+```
+
+set your mysql config in .env
+
 ## Running
 
 ```
