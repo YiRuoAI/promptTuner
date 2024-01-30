@@ -74,6 +74,9 @@ export async function list(req: ServerAPI.listModelReq): Promise<{ data: { list:
     params: {
       page: req.current,
       pageSize: req.pageSize,
+      name: req.name,
+      provider: req.provider,
+      type: req.type,
     },
   });
 }

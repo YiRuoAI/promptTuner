@@ -9,6 +9,7 @@ import { Button, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import CreateFormModal from './components/CreateForm';
 import { modelService } from '@/services/server';
+import { ProviderLabel } from '@/services/server/model';
 
 const ModelList: React.FC = () => {
   /**
@@ -40,11 +41,14 @@ const ModelList: React.FC = () => {
     {
       title: <FormattedMessage id="pages.modelList.provider" defaultMessage="Provider" />,
       dataIndex: 'provider',
+      valueType: 'select',
+      valueEnum: ProviderLabel,
     },
     {
       title: <FormattedMessage id="pages.modelList.type" defaultMessage="Type" />,
       dataIndex: 'type',
-      valueType: 'textarea',
+      valueType: 'select',
+      valueEnum: modelService.ModelType,
     },
     {
       title: <FormattedMessage id="pages.modelList.desc" defaultMessage="Description" />,
@@ -86,7 +90,7 @@ const ModelList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<ServerAPI.ModelListItem, API.PageParams>
+      <ProTable<ServerAPI.ModelListItem, ServerAPI.listModelReq>
         rowSelection={false}
         headerTitle={intl.formatMessage({
           id: 'pages.modelList.title',

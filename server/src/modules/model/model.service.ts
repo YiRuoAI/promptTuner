@@ -1,10 +1,10 @@
-import { CreateDto, UpdateDto } from '@dto/model.dto';
+import { CreateDto, ListDto, UpdateDto } from '@dto/model.dto';
 import { PaginationDto } from '@dto/pagination.dto';
 import { ChatModelEntity } from '@database/mysqldb/entities/core/chatModel.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListVo } from '@vo/model.vo';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 @Injectable()
 export class ModelService {
@@ -14,10 +14,28 @@ export class ModelService {
   ) {}
 
   // 获取模型的列表
-  async getList(req: PaginationDto) {
-    const list = await this.chatModelRepository.find();
+  async getList(req: ListDto) {
+    const where = {};
+    if (req.name) {
+      where['name'] = Like(`%${req.name}%`);
+    }
+    if (req.provider) {
+      where['provider'] = req.provider;
+    }
+    if (req.type) {
+      where['type'] = req.type;
+    }
+
+    const [list, total] = await this.chatModelRepository.findAndCount({
+      where,
+      skip: (req.page - 1) * req.pageSize,
+      take: req.pageSize,
+    });
     const vo = new ListVo();
     vo.list = list;
+    vo.total = total;
+    vo.page = req.page;
+    vo.pageSize = req.pageSize;
     return vo;
   }
 

@@ -8,6 +8,14 @@ declare namespace ServerAPI {
     createdAt?: number;
   }
 
+  type listModelReq = {
+    current?: number;
+    pageSize?: number;
+    name?: string;
+    provider?: string;
+    type?: string;
+  }
+
   type createModelReq = {
     name: string;
     brief: string;
@@ -25,11 +33,6 @@ declare namespace ServerAPI {
     type: string;
     endpoints: any;
     config: any;
-  }
-
-  type listModelReq = {
-    current?: number;
-    pageSize?: number;
   }
 
   type PromptListItem = {

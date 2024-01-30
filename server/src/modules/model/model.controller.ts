@@ -2,7 +2,7 @@ import { Controller, Delete, Get, Post } from '@nestjs/common';
 import { PaginationDto } from '@dto/pagination.dto';
 import { ModelService } from './model.service';
 import { Query, Body } from '@nestjs/common';
-import { CreateDto, DeleteDto, UpdateDto } from '@dto/model.dto';
+import { CreateDto, DeleteDto, ListDto, UpdateDto } from '@dto/model.dto';
 
 @Controller('/model')
 export class ModelController {
@@ -24,7 +24,7 @@ export class ModelController {
    * @returns
    */
   @Get('/list')
-  async list(@Query() req: PaginationDto) {
+  async list(@Query() req: ListDto) {
     return await this.service.getList(req);
   }
 
